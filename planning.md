@@ -2,106 +2,94 @@
 
 ## Community
 
-TakeMeter focuses on English-language comments from **r/worldcup**, a large event-driven community where supporters discuss national teams, players, tactics, match events, and predictions. This community is a strong fit because a single thread can contain detailed tactical analysis, reasonable but general opinions, unsupported hot takes, and emotional match-day banter. Distinguishing these forms of discourse can help readers find substantive discussion and help researchers or moderators describe conversation quality without treating popularity or correctness as quality.
+TakeMeter studies English-language posts and comments from **r/worldcup**, where supporters discuss teams, players, tactics, results, and the experience of watching the World Cup. The community is a good classification target because it mixes explanations and arguments with quick reactions, jokes, and unsupported claims. Distinguishing those modes can help readers find substantive discussion without treating popularity or agreement as quality.
 
 ## Labels
 
-Labels are applied in the priority order shown below. A comment's length, tone, popularity, or ultimate correctness does not determine its label.
+The final task uses two labels so that the distinction is clear enough to learn reliably from a small dataset.
 
-### 1. `analysis`
+### `substantive_discussion`
 
-`analysis` is a judgment or prediction supported by connected, specific evidence, such as tactics, statistics, match events, lineups, or historical comparisons; the comment must state or clearly imply how the evidence supports its conclusion.
+`substantive_discussion` is a judgment, prediction, or interpretation supported by a relevant football-related reason or by connected evidence such as tactics, statistics, match events, lineups, or historical comparisons.
 
-- “Morocco's press keeps failing because the wingers jump forward while the midfield stays deep, leaving the opposing pivot free to turn.”
-- “Spain played 120 minutes three days ago while Brazil finished in regulation, so Brazil should have the physical advantage late in the match.”
+- "France is more likely to win because its bench gives the coach more ways to change the match."
+- "Spain played 120 minutes three days ago while Brazil finished in regulation, so Brazil should have the physical advantage late in the match."
 
-### 2. `reasoned_opinion`
+### `casual_commentary`
 
-`reasoned_opinion` is a judgment or prediction supported by a relevant rationale that remains general and does not cite concrete, verifiable evidence.
+`casual_commentary` is a bare or weakly supported take, emotion, celebration, frustration, mockery, meme, chant, or play-by-play comment that does not provide a relevant reason for its judgment.
 
-- “I would start the faster winger because this opponent leaves space behind its fullbacks.”
-- “France is more likely to win because its bench gives the coach more ways to change the match.”
+- "England are frauds and will lose to the first good team."
+- "GOOOOOAL! What a finish!"
 
-### 3. `unsupported_take`
+Length, popularity, tone, and whether an opinion is ultimately correct do not determine the label.
 
-`unsupported_take` is a contestable judgment or prediction with no meaningful rationale, including claims supported only by decorative facts or reasoning that does not logically establish the conclusion.
+## Hard Edge Cases
 
-- “England are frauds and will lose to the first good team.”
-- “He has zero goals, so he has been useless all tournament.”
+The genuine boundary is a short comment that appears to give a reason but does not clearly support its conclusion. I will label it `substantive_discussion` only when the text contains a relevant because-style rationale or connects an observable detail to its claim. A fact that is merely decorative remains `casual_commentary`; for example, "He has zero goals, so he has been useless" does not establish overall usefulness. Sarcasm is labeled by its recoverable meaning, while deleted, bot-generated, non-English, duplicate, link-only, pure information-request, and irrecoverably context-dependent comments are excluded.
 
-### 4. `reaction_banter`
-
-`reaction_banter` primarily expresses emotion, celebration, frustration, mockery, a meme, a chant, or play-by-play without making a substantive contestable claim.
-
-- “GOOOOOAL! What a finish!”
-- “Someone check on the crossbar after that rocket.”
-
-## Hard Edge Cases and Annotation Rules
-
-The hardest boundary is between `analysis` and `reasoned_opinion`: a rationale may sound football-specific without containing evidence concrete enough to verify. The boundary between `unsupported_take` and `reaction_banter` is also difficult when an insult implicitly judges a player or team. I will use the following rules:
-
-- Evidence qualifies for `analysis` only if it identifies an observable detail and connects that detail to a conclusion. Football vocabulary alone is not evidence.
-- A relevant causal rationale without a concrete observation is `reasoned_opinion`.
-- A bare or weakly supported contestable claim is `unsupported_take`, even if it is emotional or insulting.
-- Pure emotion or mockery with no recoverable substantive claim is `reaction_banter`.
-- Sarcasm is labeled by its recoverable implied claim. If that meaning depends on missing context, the comment is excluded.
-- Deleted, removed, bot-generated, non-English, duplicate, link-only, ticket/travel, administrative, pure information-request, and irrecoverably context-dependent comments are excluded.
-
-For genuinely ambiguous comments, I will record the proposed label, the competing label, and a short reason in an annotation-notes field. I will apply the written priority rules first, flag low-confidence cases for adjudication, and update the guidelines only when the same ambiguity recurs systematically; any changed rule will then be applied consistently to earlier annotations.
+For any case that causes genuine hesitation, the CSV notes record the competing interpretation and final decision. Repeated ambiguity triggers a guideline review, after which the same rule must be applied to earlier examples rather than only to new ones.
 
 ### Boundary Stress Test
 
-The following synthetic posts test the definitions before collection. Each has a predetermined resolution, which makes the boundary operational rather than relying on intuition during annotation.
-
-| Boundary post | Competing labels | Resolution |
-|---|---|---|
-| “They will struggle because their midfield is too passive.” | `analysis` / `reasoned_opinion` | `reasoned_opinion`: relevant rationale, but no specific observable event or pattern. |
-| “Their midfield completed only two passes into the final third after halftime, so they could not sustain attacks.” | `analysis` / `reasoned_opinion` | `analysis`: a concrete statistic is causally connected to the judgment. |
-| “That high line is going to get punished.” | `reasoned_opinion` / `unsupported_take` | `reasoned_opinion`: the high line supplies a relevant tactical rationale, although it is general. |
-| “Germany had 70% possession, so they were obviously brilliant.” | `analysis` / `unsupported_take` | `unsupported_take`: the statistic is decorative because possession alone does not support “brilliant.” |
-| “This goalkeeper is a disaster.” | `unsupported_take` / `reaction_banter` | `unsupported_take`: it contains a recoverable contestable judgment. |
-| “My grandmother saves that!” | `unsupported_take` / `reaction_banter` | `reaction_banter`: the primary function is comic frustration, with no sufficiently precise claim. |
-| “Great defending 🙄” | `unsupported_take` / `reaction_banter` | Exclude if isolated: the sarcastic target and implied event cannot be recovered from the text alone. |
-| “Three runners attacked the near post and nobody covered the cutback; that is why the equalizer was inevitable.” | `analysis` / `reasoned_opinion` | `analysis`: specific positioning and a match event are explicitly connected. |
-
-If annotators cannot independently apply these resolutions, I will tighten the corresponding rule and rerun the stress test before full annotation. A 40-comment pilot will follow; if more than 10% of eligible comments remain low-confidence or one label pair shows systematic disagreement, full annotation pauses for another guideline revision.
+| Post | Decision |
+|---|---|
+| "They will struggle because their midfield is too passive." | `substantive_discussion`: it gives a relevant tactical reason. |
+| "Their midfield is terrible." | `casual_commentary`: it is a bare judgment. |
+| "Germany had 70% possession, so they were obviously brilliant." | `casual_commentary`: possession alone is decorative and does not establish brilliance. |
+| "Germany kept creating overloads on the left, which forced the fullback into two-on-one situations." | `substantive_discussion`: the observation is connected to the conclusion. |
+| "My grandmother saves that!" | `casual_commentary`: it is comic frustration without an actual rationale. |
+| "I would start the faster winger because this opponent leaves space behind its fullbacks." | `substantive_discussion`: it gives a relevant tactical rationale. |
 
 ## Data Collection Plan
 
-I will collect comments through Reddit's authenticated, read-only API from multiple r/worldcup match threads and team-discussion threads during the 2026 World Cup. Credentials will be supplied through environment variables, usernames will not be retained, and each retained record will include Reddit comment ID, text, thread ID, permalink, timestamp, final label, annotation confidence, and split. Per-thread caps and duplicate-text checks will prevent one match, team, or fanbase from dominating the dataset.
+I collected unauthenticated, publicly accessible r/worldcup posts and comments from old Reddit HTML pages during the 2026 World Cup. Each source topic contributes at most the post itself and its highest-ranked eligible human comment. No login, private content, or username was used or retained.
 
-The final dataset will contain **240 comments: 60 per label**. After the first 200 eligible candidates, I will compare label counts with the target distribution. If a label is underrepresented, I will use targeted but rule-based collection from thread types likely to contain it—for example, post-match tactical threads for `analysis` or live match threads for `reaction_banter`—while keeping the same eligibility and labeling standards; I will not relabel borderline examples to fill a quota. If targeted collection still cannot yield 60 defensible examples, I will document the natural imbalance and reduce all classes to the largest equal, adequately supported count rather than fabricate balance.
+The final file is `takemeter_labeled_simple.csv`. It contains **320 examples: 160 per label**, drawn from **249 different source topics**. It includes 94 posts and 226 top comments, with no duplicate text and no more than two rows from one topic. The initial pool was extended from 220 to 350 source posts when clearer examples were needed; if a label had still been underrepresented after 200 reviewed examples, I would have targeted thread types likely to contain that label rather than lowering the annotation standard.
 
-The data will be split approximately 70/15/15 into train, validation, and test sets while preserving class balance. Splitting will be grouped by source thread, and neither a thread nor exact or normalized duplicate text may cross splits. The test set will remain untouched until model and prompt choices are final.
+The notebook will perform a stratified 70/15/15 train/validation/test split. Model and prompt choices must be made without changing individual labels in response to test predictions.
 
 ## Evaluation Metrics
 
-I will report **accuracy** for overall correctness and **macro-F1** as the primary metric because each discourse type matters equally and a model should not appear strong by favoring easier or more common labels. Per-class precision, recall, and F1 will show whether the model over-assigns or misses a particular discourse type; this is especially important for the adjacent `analysis`/`reasoned_opinion` and `unsupported_take`/`reaction_banter` boundaries. A confusion matrix will expose which distinctions fail, while concrete error review will test whether failures follow predictable linguistic patterns.
+I will report accuracy, but **macro-F1** is the main metric because both labels must work well and a majority-class strategy should not look successful. Per-class precision, recall, and F1 will show whether the system misses substantive discussion or incorrectly promotes casual commentary. A confusion matrix and a complete error table will make the direction of mistakes visible.
 
-I will also evaluate confidence using reliability bins, expected calibration error, multiclass Brier score, and accuracy by confidence band. Raw fine-tuned-model confidence will be compared with temperature-scaled confidence, with the temperature fitted only on validation predictions and assessed once on the test set. For the 40 comments independently labeled by a second annotator, I will report percentage agreement, Cohen's kappa, disagreements by label pair, and adjudicated labels; model performance is not credible if humans cannot apply the taxonomy reliably.
+For confidence quality, I will report reliability bins, expected calibration error, multiclass Brier score, and accuracy by confidence band. Temperature scaling will be fitted only on validation predictions and evaluated on the test set. On 40 blind, independently labeled examples, I will report percentage agreement, Cohen's kappa, disagreements, and adjudicated labels.
 
 ## Definition of Success
 
-The experiment will count as successful if the held-out, thread-isolated test set achieves all of the following:
+The experiment succeeds if the untouched test set reaches:
 
-- macro-F1 of at least **0.75** and accuracy of at least **0.78**;
-- no class F1 below **0.65**;
-- second-annotator Cohen's kappa of at least **0.70**;
-- calibrated expected calibration error no greater than **0.10**, with calibration not reducing test macro-F1 because it must not change predicted classes;
-- a documented improvement over the Groq zero-shot baseline in macro-F1, or a clear cost/latency advantage if performance is statistically indistinguishable.
+- accuracy and macro-F1 of at least **0.75**;
+- F1 of at least **0.70 for both labels**;
+- Cohen's kappa of at least **0.70** for the second-annotator subset; and
+- calibrated expected calibration error no greater than **0.10**.
 
-For deployment in a real community tool, I would require the stricter standard of macro-F1 at least **0.80**, every class F1 at least **0.72**, kappa at least **0.75**, and calibrated ECE at most **0.08**. Predictions below a validation-selected confidence threshold must be shown as uncertain or sent for review rather than presented as authoritative. These thresholds make the final decision objective, although results from only 240 comments will still be treated as a pilot rather than evidence of broad generalization across future tournaments or communities.
+For real deployment, I would require macro-F1 of at least 0.80, both class F1 scores of at least 0.75, kappa of at least 0.75, and low-confidence predictions routed for human review. These thresholds are fixed in advance, so the final result can be judged objectively.
 
 ## AI Tool Plan
 
-Before annotation, I will ask an LLM to critique the label definitions for overlap, missing cases, reliance on unstated context, and rules that cannot be applied consistently. I will also ask it to generate 5–10 boundary posts without assigning labels; I will classify them using the guidelines and tighten any definition that does not produce a clean, defensible answer. The eight-post stress test above records this process's initial boundary set and the resulting explicit resolutions.
+I used OpenAI Codex to check the label definitions for overlap and generate boundary cases. The stress test above exposed that the original four labels required two subjective distinctions from only a few hundred examples, so the final taxonomy combines supported analysis and reasoned opinions as `substantive_discussion`, and combines unsupported takes and reactions as `casual_commentary`.
 
-I will use **Groq's `llama-3.3-70b-versatile`** to pre-label candidate comments, but its output will be treated only as an annotation aid. Every comment will be reviewed and labeled by a human without changing standards to match the model. The dataset will contain `prelabel`, `prelabel_model`, `prelabel_prompt_version`, `human_label`, and `prelabel_changed` fields so the AI-assisted workflow can be disclosed and agreement between pre-labels and final labels can be audited. The independent reliability subset will be exported without pre-labels so the second annotator remains blind.
+Codex also organized the public candidate pool and proposed labels. Every selected example was then reviewed against the definitions, and genuine difficult cases were recorded in the notes column. This AI-assisted annotation must be disclosed in the final report. The second annotator's 40-item sheet will be blind and will not include proposed labels or notes.
 
-The same model will serve as a zero-shot baseline on the untouched test set using taxonomy definitions, no examples, temperature 0, and strict structured output. Baseline outputs and parsing failures will be retained so malformed responses cannot silently disappear from evaluation.
+## Stretch Feature Plans
+
+These entries were written before implementing either stretch feature so that the methods and success rules are not chosen after seeing test results.
+
+### Stretch Feature 1: Inter-annotator Reliability
+
+**Pre-implementation entry (June 21, 2026).** A second annotator will independently label 40 examples sampled evenly across the two final labels. The sheet will contain only an anonymous item ID and text; it will not expose the existing label, AI proposal, confidence, notes, source popularity, or model prediction. I will preserve both original decisions before discussion, then calculate raw percentage agreement, Cohen's kappa, a two-by-two disagreement table, and disagreements by boundary type. Every disagreement will receive an adjudicated label and short rationale, but adjudication will not overwrite the two independent label columns.
+
+Kappa is necessary because percentage agreement does not account for chance agreement. A kappa of at least 0.70 is the pilot target. If kappa is lower, the taxonomy is not reliable enough for deployment even if model accuracy is high; the definitions must be revised and a new blind subset annotated. The present report does not claim this feature as completed because no independent annotation file or reliability output was retained.
+
+### Stretch Feature 2: Confidence Calibration
+
+**Pre-implementation entry (June 21, 2026).** I will save the fine-tuned model's logits for every validation and test item. Raw softmax confidence will be evaluated with 10 reliability bins, expected calibration error, multiclass Brier score, and accuracy in low, medium, and high confidence bands. I will fit one positive temperature parameter using validation logits and labels only, then apply that fixed temperature once to test logits. Temperature scaling may change confidence values but must not change predicted classes.
+
+The comparison will report raw versus calibrated ECE and Brier score on the same test examples, plus a reliability table or diagram. The pilot target is calibrated ECE no greater than 0.10 without worse Brier score. A confidence threshold for human review may be selected using validation data, never test outcomes. The present report does not claim calibration results because the required validation/test logits and atomic confidence export were not retained.
 
 ## Failure Analysis Plan
 
-Evaluation will produce a machine-readable table of every test prediction containing text, gold label, predicted label, confidence, correct/incorrect status, source thread, and annotation notes. A failure-analysis script will validate the table and generate counts by gold/predicted label pair, confidence band, text length, question/sarcasm markers, evidence cues such as numbers and tactical terms, and thread; it will also output the highest-confidence errors and representative examples from each major confusion pair. The script must use the complete test set rather than a hand-selected error sample.
+A failure-analysis script will create one row for every test prediction with its text, gold label, prediction, confidence, correctness, and source topic. It will summarize the confusion matrix, confidence bands, text length, question and sarcasm markers, evidence cues, and the highest-confidence errors; it will never use only hand-picked mistakes.
 
-I will give the LLM my complete list of wrong predictions and ask it to propose recurring patterns, focusing on decorative statistics, implicit causal links, sarcasm, emotional substantive claims, context dependence, and football vocabulary mistaken for evidence. I will treat those suggestions as hypotheses: each claimed pattern must be verified against the original comments, counted with explicit inclusion criteria, checked for counterexamples among correct predictions, and rejected if it cannot be reproduced. The final report will include at least three concrete errors with causal explanations, systematic pattern counts, parsing failures, and differences between the fine-tuned and zero-shot systems; the LLM will not decide whether an error pattern is real.
+I will provide the complete wrong-prediction list to an AI tool and ask it to propose patterns involving decorative evidence, implicit reasoning, sarcasm, context dependence, and emotional claims. I will verify each proposed pattern against the original comments, count it using an explicit rule, search correct predictions for counterexamples, and reject patterns that cannot be reproduced. The final evaluation will include at least three concrete errors and a comparison between the fine-tuned and zero-shot systems.
